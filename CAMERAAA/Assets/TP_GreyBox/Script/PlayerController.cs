@@ -13,7 +13,6 @@ public class PlayerController : MonoBehaviour
 	{
 		_rigidbody = GetComponent<Rigidbody>();
 	}
-
 	void FixedUpdate()
     {
 		Vector3 direction = Vector3.zero;
