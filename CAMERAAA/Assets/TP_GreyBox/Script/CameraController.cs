@@ -1,12 +1,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
     [SerializeField] private CameraConfig config;
     [SerializeField] private Camera cam;
+
+    List<AView> activeViews;
+
     // Update is called once per frame
     private static CameraController instance = null;
     public static CameraController Instance => instance;
@@ -28,6 +32,7 @@ public class CameraController : MonoBehaviour
     void Update()
     {
         ApplyConfig();
+        config = ComputeAverage();
     }
     private void ApplyConfig()
     {
@@ -39,9 +44,69 @@ public class CameraController : MonoBehaviour
     {
         config.DrawGizmos(Color.red);
     }
+
+    public void AddView(AView view) { activeViews.Add(view); }
+    public void RemoveView(AView view) { activeViews.Remove(view); }
+
+    private CameraConfig ComputeAverage() 
+    {
+        Vector3 pivotSum = Vector3.zero;
+        float distanceSum = 0f;
+        float fovSum = 0f;
+        float weightSum = 0;
+        foreach (AView view in activeViews)
+        {
+            pivotSum += view.GetConfiguration().pivot * view.weight;
+            distanceSum += view.GetConfiguration().distance * view.weight;
+            fovSum += view.GetConfiguration().fov * view.weight;
+            weightSum += view.weight;
+        }
+            return new CameraConfig(ComputeAverageYaw(), 
+                ComputeAveragePitch(), 
+                ComputeAverageRoll(), 
+                pivotSum, 
+                distanceSum, 
+                weightSum);
+    }
+
+    public float ComputeAverageYaw()
+    {
+        Vector2 sum = Vector2.zero;
+        foreach (AView view in activeViews)
+        {
+            CameraConfig config = view.GetConfiguration();
+            sum += new Vector2(Mathf.Cos(config.yaw * Mathf.Deg2Rad),
+            Mathf.Sin(config.yaw * Mathf.Deg2Rad)) * view.weight;
+        }
+        return Vector2.SignedAngle(Vector2.right, sum);
+    }
+
+    public float ComputeAveragePitch()
+    {
+        Vector2 sum = Vector2.zero;
+        foreach (AView view in activeViews)
+        {
+            CameraConfig config = view.GetConfiguration();
+            sum += new Vector2(Mathf.Cos(config.pitch * Mathf.Deg2Rad),
+            Mathf.Sin(config.pitch * Mathf.Deg2Rad)) * view.weight;
+        }
+        return Vector2.SignedAngle(Vector2.right, sum);
+    }
+
+    public float ComputeAverageRoll()
+    {
+        Vector2 sum = Vector2.zero;
+        foreach (AView view in activeViews)
+        {
+            CameraConfig config = view.GetConfiguration();
+            sum += new Vector2(Mathf.Cos(config.roll * Mathf.Deg2Rad),
+            Mathf.Sin(config.roll * Mathf.Deg2Rad)) * view.weight;
+        }
+        return Vector2.SignedAngle(Vector2.right, sum);
+    }
 }
 [Serializable]
-struct CameraConfig
+public struct CameraConfig
 {
     public float yaw;
     public float pitch;
@@ -49,6 +114,16 @@ struct CameraConfig
     public Vector3 pivot;
     public float distance;
     public float fov;
+
+    public CameraConfig(float yaw, float pitch, float roll, Vector3 pivot, float distance, float fov)
+    {
+        this.yaw = yaw;
+        this.pitch = pitch;
+        this.roll = roll;
+        this.pivot = pivot;
+        this.distance = distance;
+        this.fov = fov;
+    }
 
     public Quaternion GetRotation()
     {
