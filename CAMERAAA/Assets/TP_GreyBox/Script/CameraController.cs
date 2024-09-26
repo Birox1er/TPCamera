@@ -9,7 +9,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] private CameraConfig config;
     [SerializeField] private Camera cam;
 
-    List<AView> activeViews;
+    List<AView> activeViews=new();
 
     // Update is called once per frame
     private static CameraController instance = null;
@@ -31,8 +31,8 @@ public class CameraController : MonoBehaviour
     }
     void Update()
     {
-        ApplyConfig();
         config = ComputeAverage();
+        ApplyConfig();
     }
     private void ApplyConfig()
     {
@@ -64,9 +64,9 @@ public class CameraController : MonoBehaviour
             return new CameraConfig(ComputeAverageYaw(), 
                 ComputeAveragePitch(), 
                 ComputeAverageRoll(), 
-                pivotSum, 
-                distanceSum, 
-                weightSum);
+                pivotSum/weightSum, 
+                distanceSum/weightSum, 
+                fovSum/weightSum);
     }
 
     public float ComputeAverageYaw()
@@ -127,7 +127,7 @@ public struct CameraConfig
 
     public Quaternion GetRotation()
     {
-        return Quaternion.Euler(yaw, pitch, roll);
+        return Quaternion.Euler( pitch, yaw, roll);
     }
 
     public Vector3 GetPosition()
@@ -141,7 +141,7 @@ public struct CameraConfig
         Vector3 position = GetPosition();
         Gizmos.DrawLine(pivot, position);
         Gizmos.matrix = Matrix4x4.TRS(position, GetRotation(), Vector3.one);
-        Gizmos.DrawFrustum(Vector3.zero, fov, 0.5f, 0f, Camera.main.aspect);
+        Gizmos.DrawFrustum(Vector3.zero, fov, 5f, 0f, Camera.main.aspect);
         Gizmos.matrix = Matrix4x4.identity;
     }
 }

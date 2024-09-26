@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class AView : MonoBehaviour
 {
-    CameraController camCtrl;
+    [SerializeField]CameraController camCtrl;
     
     public bool isActiveOnStart;
 
@@ -20,5 +20,9 @@ public abstract class AView : MonoBehaviour
     void Start()
     {
         if (isActiveOnStart) SetActive(true);
+    }
+    public void OnDrawGizmos()
+    {
+        GetConfiguration().DrawGizmos(new Color(1, 0.75f, 0.8f));
     }
 }
