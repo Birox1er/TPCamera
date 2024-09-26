@@ -36,7 +36,7 @@ public class CameraController : MonoBehaviour
     }
     private void ApplyConfig()
     {
-        transform.localPosition = config.GetPosition();
+        transform.position = config.GetPosition();
         transform.rotation = config.GetRotation();
         cam.fieldOfView = config.fov;
     }
