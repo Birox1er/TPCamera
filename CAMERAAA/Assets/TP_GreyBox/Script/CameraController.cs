@@ -2,20 +2,27 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using Unity.VisualScripting.FullSerializer;
+using UnityEditor;
 using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    [SerializeField] private CameraConfig config;
     [SerializeField] private Camera cam;
+
+    [SerializeField] private CameraConfig targetConfig;
+    private CameraConfig currentConfig;
+
+    [SerializeField] private float speed = 1;
 
     List<AView> activeViews=new();
 
-    // Update is called once per frame
     private static CameraController instance = null;
     public static CameraController Instance => instance;
     private void Awake()
     {
+        currentConfig = ComputeAverage();
+
         if (instance != null && instance != this)
         {
             Destroy(this.gameObject);
@@ -31,18 +38,48 @@ public class CameraController : MonoBehaviour
     }
     void Update()
     {
-        config = ComputeAverage();
+        targetConfig = ComputeAverage();
         ApplyConfig();
     }
     private void ApplyConfig()
     {
-        transform.localPosition = config.GetPosition();
-        transform.rotation = config.GetRotation();
-        cam.fieldOfView = config.fov;
+        CalculateCurrentConfig();
+
+        transform.position = currentConfig.GetPosition();
+        transform.rotation = currentConfig.GetRotation();
+        cam.fieldOfView = currentConfig.fov;
     }
+
+    private void CalculateCurrentConfig()
+    {
+        if (speed * Time.deltaTime >= 1)
+        {
+            currentConfig = targetConfig;
+            return;
+        }
+
+        currentConfig.pitch = currentConfig.pitch + (targetConfig.pitch - currentConfig.pitch) * speed * Time.deltaTime;
+        currentConfig.roll = currentConfig.roll + (targetConfig.roll -currentConfig.roll) * speed * Time.deltaTime;
+        currentConfig.pivot = currentConfig.pivot + (targetConfig.pivot - currentConfig.pivot) * speed * Time.deltaTime;
+        currentConfig.distance = currentConfig.distance + (targetConfig.distance - currentConfig.distance) * speed * Time.deltaTime;
+        currentConfig.fov = currentConfig.fov + (targetConfig.fov - currentConfig.fov) * speed * Time.deltaTime;
+
+        Vector2 targetYaw = new Vector2(Mathf.Cos(targetConfig.yaw * Mathf.Deg2Rad),
+            Mathf.Sin(targetConfig.yaw * Mathf.Deg2Rad));
+        Vector2 currentYaw = new Vector2(Mathf.Cos(currentConfig.yaw * Mathf.Deg2Rad),
+            Mathf.Sin(currentConfig.yaw * Mathf.Deg2Rad));
+
+        currentYaw = currentYaw + (targetYaw - currentYaw) * speed * Time.deltaTime;
+        currentConfig.yaw = Vector2.SignedAngle(Vector2.right, currentYaw);
+
+
+
+
+    }
+
     private void OnDrawGizmos()
     {
-        config.DrawGizmos(Color.red);
+        targetConfig.DrawGizmos(Color.red);
     }
 
     public void AddView(AView view) { activeViews.Add(view); }
@@ -61,6 +98,8 @@ public class CameraController : MonoBehaviour
             fovSum += view.GetConfiguration().fov * view.weight;
             weightSum += view.weight;
         }
+        weightSum = weightSum == 0 ? 1 : weightSum;
+
             return new CameraConfig(ComputeAverageYaw(), 
                 ComputeAveragePitch(), 
                 ComputeAverageRoll(), 
@@ -132,6 +171,7 @@ public struct CameraConfig
 
     public Vector3 GetPosition()
     {
+        //Debug.Log("the PIVOT is " + pivot);
         return pivot+(GetRotation()*(Vector3.back * distance));
     }
     public void DrawGizmos(Color color)
