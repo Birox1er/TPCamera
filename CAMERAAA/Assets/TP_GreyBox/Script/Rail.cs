@@ -8,9 +8,9 @@ public class Rail : MonoBehaviour
 {
     public bool isLoop = false;
 
-    List<GameObject> children = new List<GameObject>();
+    public List<GameObject> children = new List<GameObject>();
 
-    [SerializeField] private float length = 0;
+    private float length = 0;
     private void Start()
     {
         for (int i = 0; i < transform.childCount; i++)
