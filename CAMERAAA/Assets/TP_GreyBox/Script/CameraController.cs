@@ -44,7 +44,6 @@ public class CameraController : MonoBehaviour
     private void ApplyConfig()
     {
         CalculateCurrentConfig();
-
         transform.position = currentConfig.GetPosition();
         transform.rotation = currentConfig.GetRotation();
         cam.fieldOfView = currentConfig.fov;

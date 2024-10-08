@@ -38,7 +38,6 @@ public class FreeFollowView : AView
             i = 2;
         }
         Vector3 pivot = curve.GetPosition(curvePosition, transform.localToWorldMatrix) ;
-        Debug.Log(pivot);
         float distance = 0;
         return new CameraConfig(yaw, pitch[i], roll[i], pivot, distance, fov[i]);
     }

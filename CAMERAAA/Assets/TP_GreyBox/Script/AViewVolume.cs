@@ -27,7 +27,7 @@ public abstract class AViewVolume : MonoBehaviour
     {
         if (isActive) { ViewVolumeBlender.Instance.AddVolume(this); }
         else { ViewVolumeBlender.Instance.RemoveVolume(this); }
-        IsActive = isActive; 
+        IsActive = isActive;
     }
 
     // Update is called once per frame
