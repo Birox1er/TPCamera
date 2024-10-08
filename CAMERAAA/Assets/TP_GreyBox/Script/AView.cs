@@ -6,7 +6,7 @@ public abstract class AView : MonoBehaviour
 {
     [SerializeField]CameraController camCtrl;
     
-    public bool isActiveOnStart;
+    //public bool isActiveOnStart;
 
     public float weight;
 
