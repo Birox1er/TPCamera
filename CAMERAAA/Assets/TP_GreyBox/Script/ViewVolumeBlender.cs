@@ -5,8 +5,8 @@ using UnityEngine.UIElements;
 
 public class ViewVolumeBlender : MonoBehaviour
 {
-    List<AViewVolume> ActiveViewVolumes;
-    Dictionary<AView, List<AViewVolume>> VolumesPerViews;
+    List<AViewVolume> ActiveViewVolumes=new List<AViewVolume>();
+    Dictionary<AView, List<AViewVolume>> VolumesPerViews=new Dictionary<AView, List<AViewVolume>>();
 
 
 
@@ -16,6 +16,7 @@ public class ViewVolumeBlender : MonoBehaviour
         if (!VolumesPerViews.ContainsKey(viewVol.view))
         {
             VolumesPerViews.Add(viewVol.view, new List<AViewVolume>());
+            Debug.Log(viewVol.view.gameObject.name);
             viewVol.view.SetActive(true);
         }
         VolumesPerViews[viewVol.view].Add(viewVol);
@@ -70,8 +71,7 @@ public class ViewVolumeBlender : MonoBehaviour
 
         foreach (AViewVolume v in ActiveViewVolumes)
         {
-            float weight = v.view.weight > 1 ? 1 : v.view.weight;
-            weight = v.view.weight < 0 ? 0 : v.view.weight;
+            float weight = v.ComputeSelfWeight();
 
             float remainingWeight = 1.0f - weight;
 
