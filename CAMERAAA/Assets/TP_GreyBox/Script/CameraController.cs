@@ -72,10 +72,6 @@ public class CameraController : MonoBehaviour
 
         currentYaw = currentYaw + (targetYaw - currentYaw) * speed * Time.deltaTime;
         currentConfig.yaw = Vector2.SignedAngle(Vector2.right, currentYaw);
-
-
-
-
     }
 
     private void OnDrawGizmos()
