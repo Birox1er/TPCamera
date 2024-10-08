@@ -19,7 +19,7 @@ public abstract class AView : MonoBehaviour
 
     void Start()
     {
-        if (isActiveOnStart) SetActive(true);
+        //if (isActiveOnStart) SetActive(true);
     }
     public void OnDrawGizmos()
     {
