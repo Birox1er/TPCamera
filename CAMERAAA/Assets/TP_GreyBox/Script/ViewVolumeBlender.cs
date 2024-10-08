@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class ViewVolumeBlender : MonoBehaviour
 {
@@ -59,6 +60,24 @@ public class ViewVolumeBlender : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        foreach (AView view in VolumesPerViews.Keys) view.weight = 0;
+
+        ActiveViewVolumes.Sort((a, b) =>
+        {
+            int temp = a.priority.CompareTo(b.priority);
+            return temp != 0 ? temp : a.uid.CompareTo(b.uid);
+        });
+
+        foreach (AViewVolume v in ActiveViewVolumes)
+        {
+            float weight = v.view.weight > 1 ? 1 : v.view.weight;
+            weight = v.view.weight < 0 ? 0 : v.view.weight;
+
+            float remainingWeight = 1.0f - weight;
+
+            foreach (AView view in VolumesPerViews.Keys) view.weight *= remainingWeight;
+
+            v.view.weight += weight;
+        }
     }
 }

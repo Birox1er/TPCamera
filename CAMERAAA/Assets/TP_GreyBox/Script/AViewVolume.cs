@@ -9,7 +9,7 @@ public abstract class AViewVolume : MonoBehaviour
     public int priority = 0;
     public AView view;
 
-    int uid;
+    public int uid {  get; private set; }
 
     static int nextUid = 0;
 
