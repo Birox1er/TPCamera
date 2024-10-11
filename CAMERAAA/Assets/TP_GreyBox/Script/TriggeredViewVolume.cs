@@ -5,11 +5,11 @@ using UnityEngine;
 public class TriggeredViewVolume : AViewVolume
     //MUST BE ATTACHED TO A COLLIDER OBJECT IN MODE 'TRIGGER'
 {
-    GameObject target;
+    public GameObject target;
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other == target)
+        if (other.gameObject == target)
         {
             SetActive(true);
         }
@@ -17,7 +17,7 @@ public class TriggeredViewVolume : AViewVolume
 
     private void OnTriggerExit(Collider other)
     {
-        if (other == target)
+        if (other.gameObject == target)
         {
             SetActive(false);
         }
