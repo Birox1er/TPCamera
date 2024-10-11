@@ -26,6 +26,7 @@ public abstract class AViewVolume : MonoBehaviour
 
     protected void SetActive(bool isActive) 
     {
+        ViewVolumeBlender.Instance.Refresh();
         CameraController.Instance.Cut(isCutOnSwitch);
         if (isActive) { ViewVolumeBlender.Instance.AddVolume(this); }
         else { ViewVolumeBlender.Instance.RemoveVolume(this); }
