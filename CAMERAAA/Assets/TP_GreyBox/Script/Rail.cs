@@ -13,11 +13,9 @@ public class Rail : MonoBehaviour
     private float length = 0;
     private void Start()
     {
-        for (int i = 0; i < transform.childCount; i++)
+        for (int i = 0; i < children.Count; i++)
         {
-            children.Add(transform.GetChild(i).gameObject);
-
-            //Calculate length
+            
             if(i > 0)
             {
                 length += Vector3.Distance(children[i - 1].transform.position, children[i].transform.position);
