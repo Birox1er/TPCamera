@@ -61,6 +61,10 @@ public class ViewVolumeBlender : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Refresh();
+    }
+    public void Refresh()
+    {
         foreach (AView view in VolumesPerViews.Keys) view.weight = 0;
         ActiveViewVolumes.Sort((a, b) =>
         {
