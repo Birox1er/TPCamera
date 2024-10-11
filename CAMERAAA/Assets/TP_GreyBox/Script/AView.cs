@@ -14,7 +14,10 @@ public abstract class AView : MonoBehaviour
 
     public void SetActive(bool isActive) 
     {
-        camCtrl.AddView(this);
+        if (isActive)
+            camCtrl.AddView(this);
+        else
+            camCtrl.RemoveView(this);
     }
 
     void Start()

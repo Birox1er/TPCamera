@@ -8,6 +8,7 @@ public abstract class AViewVolume : MonoBehaviour
 
     public int priority = 0;
     public AView view;
+    public bool isCutOnSwitch;
 
     public int uid {  get; private set; }
 
@@ -25,6 +26,7 @@ public abstract class AViewVolume : MonoBehaviour
 
     protected void SetActive(bool isActive) 
     {
+        CameraController.Instance.Cut(isCutOnSwitch);
         if (isActive) { ViewVolumeBlender.Instance.AddVolume(this); }
         else { ViewVolumeBlender.Instance.RemoveVolume(this); }
         IsActive = isActive;

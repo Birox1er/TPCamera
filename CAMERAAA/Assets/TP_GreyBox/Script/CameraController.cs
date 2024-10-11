@@ -19,6 +19,8 @@ public class CameraController : MonoBehaviour
 
     private static CameraController instance = null;
     public static CameraController Instance => instance;
+
+    private bool isCutRequested;
     private void Awake()
     {
         currentConfig = ComputeAverage();
@@ -43,11 +45,17 @@ public class CameraController : MonoBehaviour
     }
     private void ApplyConfig()
     {
-        CalculateCurrentConfig();
+        if (isCutRequested)
+        {
+            currentConfig = targetConfig;
+        }
+        else
+        {
+            CalculateCurrentConfig();
+        }
         transform.position = currentConfig.GetPosition();
         transform.rotation = currentConfig.GetRotation();
         cam.fieldOfView = currentConfig.fov;
-    
     }
 
     private void CalculateCurrentConfig()
@@ -83,12 +91,14 @@ public class CameraController : MonoBehaviour
 
     private CameraConfig ComputeAverage() 
     {
+        Debug.Log("aegezf");
         Vector3 pivotSum = Vector3.zero;
         float distanceSum = 0f;
         float fovSum = 0f;
         float weightSum = 0;
         foreach (AView view in activeViews)
         {
+            Debug.Log(view.GetConfiguration().yaw + " " + view.GetConfiguration().pitch + " " + view.GetConfiguration().roll);
             pivotSum += view.GetConfiguration().pivot * view.weight;
             distanceSum += view.GetConfiguration().distance * view.weight;
             fovSum += view.GetConfiguration().fov * view.weight;
@@ -138,6 +148,10 @@ public class CameraController : MonoBehaviour
             Mathf.Sin(config.roll * Mathf.Deg2Rad)) * view.weight;
         }
         return Vector2.SignedAngle(Vector2.right, sum);
+    }
+    public void Cut(bool val )
+    {
+        isCutRequested = val;
     }
 }
 [Serializable]

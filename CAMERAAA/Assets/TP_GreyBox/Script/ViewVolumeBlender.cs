@@ -62,7 +62,6 @@ public class ViewVolumeBlender : MonoBehaviour
     void Update()
     {
         foreach (AView view in VolumesPerViews.Keys) view.weight = 0;
-
         ActiveViewVolumes.Sort((a, b) =>
         {
             int temp = a.priority.CompareTo(b.priority);
