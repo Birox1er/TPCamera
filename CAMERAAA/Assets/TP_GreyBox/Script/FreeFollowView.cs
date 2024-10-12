@@ -18,7 +18,7 @@ public class FreeFollowView : AView
     public override CameraConfig GetConfiguration()
     {
         Vector3 dir = (target.transform.position - transform.position).normalized;
-        curvePosition += Input.GetAxisRaw("Vertical");
+        curvePosition += Input.GetAxisRaw("Vertical2")*curveSpeed;
         if (curvePosition > 1)
         {
             curvePosition = 1;
@@ -27,7 +27,7 @@ public class FreeFollowView : AView
         {
             curvePosition = 0;
         }
-        yaw += Input.GetAxisRaw("Horizontal")*yawSpeed;
+        yaw += Input.GetAxisRaw("Horizontal2")*yawSpeed;
         int i = 0;
         if (curvePosition < 0.9 && curvePosition > 0.2)
         {
